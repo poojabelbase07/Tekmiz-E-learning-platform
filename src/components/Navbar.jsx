@@ -25,17 +25,18 @@ function Navbar() {
 export default Navbar;
 */
 
+// Navbar.jsx
+// Navbar.jsx - WITH CSS MODULES
 import React, { useState } from 'react';
 import { Search, Menu, User } from 'lucide-react';
+import { useSidebarContext } from '../context/SidebarContext';
+import styles from './Navbar.module.css';
 
 const Navbar = () => {
+  const { toggleSidebar } = useSidebarContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-
-  const handleMenuClick = () => {
-    console.log('Hamburger clicked - toggle sidebar');
-  };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -54,87 +55,78 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
-      <div className="flex items-center justify-between px-4 py-3 md:px-6">
+    <nav className={styles.navbar}>
+      <div className={styles.navbarContainer}>
         
         {/* Left Section: Hamburger + Logo */}
-        <div className="flex items-center gap-3">
+        <div className={styles.navbarLeft}>
           <button
-            onClick={handleMenuClick}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+            onClick={toggleSidebar}
+            className={styles.hamburgerBtn}
             aria-label="Toggle menu"
           >
-            <Menu className="w-6 h-6 text-gray-700" />
+            <Menu className={styles.hamburgerIcon} />
           </button>
           
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">T</span>
+          <div className={styles.logoContainer}>
+            <div className={styles.logoIcon}>
+              <span className={styles.logoTextIcon}>T</span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent hidden sm:block">
-              Tekmiz
-            </span>
+            <span className={styles.logoText}>Tekmiz</span>
           </div>
         </div>
 
         {/* Center Section: Search Bar */}
-        <div className="flex-1 max-w-2xl mx-4">
-          <div className="relative">
+        <div className={styles.navbarCenter}>
+          <div className={styles.searchContainer}>
             <input
               type="text"
               placeholder="Search playlists, topics, teachers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleSearchKeyPress}
-              className="w-full px-4 py-2 pl-10 pr-4 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-500 transition-colors"
+              className={styles.searchInput}
             />
-            <button
-              onClick={handleSearch}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            >
-              <Search className="w-5 h-5 text-gray-400 hover:text-purple-600 transition-colors" />
+            <button onClick={handleSearch} className={styles.searchIconBtn}>
+              <Search className={styles.searchIcon} />
             </button>
           </div>
         </div>
 
         {/* Right Section: Auth Buttons or Profile */}
-        <div className="flex items-center gap-3">
+        <div className={styles.navbarRight}>
           {!isAuthenticated ? (
             <>
               <button
                 onClick={() => console.log('Login clicked')}
-                className="px-4 py-2 text-purple-600 font-medium hover:bg-purple-50 rounded-lg transition-colors hidden sm:block"
+                className={styles.loginBtn}
               >
                 Login
               </button>
               <button
                 onClick={() => console.log('Register clicked')}
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-medium rounded-lg hover:shadow-lg transition-all"
+                className={styles.registerBtn}
               >
                 Register
               </button>
             </>
           ) : (
-            <div className="relative">
+            <div className={styles.profileContainer}>
               <button
                 onClick={handleProfileClick}
-                className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-full flex items-center justify-center hover:shadow-lg transition-all"
+                className={styles.profileBtn}
               >
-                <User className="w-5 h-5 text-white" />
+                <User className={styles.profileIcon} />
               </button>
               
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
-                  <button className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors">
-                    Edit Profile
-                  </button>
-                  <button className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors">
-                    Dashboard
-                  </button>
-                  <hr className="my-2" />
+                <div className={styles.profileMenu}>
+                  <button className={styles.profileMenuItem}>Edit Profile</button>
+                  <button className={styles.profileMenuItem}>Dashboard</button>
+                  <hr className={styles.profileMenuDivider} />
                   <button 
                     onClick={() => setIsAuthenticated(false)}
-                    className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors"
+                    className={`${styles.profileMenuItem} ${styles.logout}`}
                   >
                     Logout
                   </button>
@@ -144,8 +136,6 @@ const Navbar = () => {
           )}
         </div>
       </div>
-
-      
     </nav>
   );
 };

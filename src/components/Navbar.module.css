@@ -1,0 +1,269 @@
+/* Navbar.module.css */
+
+/* Main Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+}
+
+.navbarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+/* Left Section */
+.navbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hamburgerBtn {
+  padding: 0.5rem;
+  border: none;
+  background-color: transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.hamburgerBtn:hover {
+  background-color: #f3f4f6;
+}
+
+.hamburgerIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #374151;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoIcon {
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(to bottom right, #9333ea, #3b82f6);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoTextIcon {
+  color: white;
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #9333ea, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Center Section - Search */
+.navbarCenter {
+  flex: 1;
+  max-width: 42rem;
+  margin: 0 1rem;
+}
+
+.searchContainer {
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 9999px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.searchInput:focus {
+  border-color: #9333ea;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchIconBtn {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.searchIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #9ca3af;
+  transition: color 0.2s;
+}
+
+.searchIconBtn:hover .searchIcon {
+  color: #9333ea;
+}
+
+/* Right Section - Auth */
+.navbarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.loginBtn {
+  padding: 0.5rem 1rem;
+  color: #9333ea;
+  font-weight: 500;
+  background-color: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.loginBtn:hover {
+  background-color: #faf5ff;
+}
+
+.registerBtn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(to right, #9333ea, #3b82f6);
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.registerBtn:hover {
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+}
+
+/* Profile Section */
+.profileContainer {
+  position: relative;
+}
+
+.profileBtn {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(to bottom right, #9333ea, #3b82f6);
+  border: none;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.profileBtn:hover {
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.4);
+}
+
+.profileIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: white;
+}
+
+.profileMenu {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 12rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid #f3f4f6;
+  padding: 0.5rem 0;
+}
+
+.profileMenuItem {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.profileMenuItem:hover {
+  background-color: #f9fafb;
+}
+
+.profileMenuItem.logout {
+  color: #dc2626;
+}
+
+.profileMenuItem.logout:hover {
+  background-color: #fef2f2;
+}
+
+.profileMenuDivider {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hamburgerBtn {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hamburgerBtn {
+    display: none;
+  }
+  
+  .navbarContainer {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .logoText {
+    display: none;
+  }
+  
+  .loginBtn {
+    display: none;
+  }
+  
+  .navbarCenter {
+    margin: 0 0.5rem;
+  }
+  
+  .searchInput {
+    font-size: 0.85rem;
+  }
+}
