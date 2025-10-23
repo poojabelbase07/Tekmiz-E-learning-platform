@@ -25,6 +25,7 @@ export default Sidebar;
 
 // Sidebar.jsx
 // Sidebar.jsx - WITH CSS MODULES + REACT ROUTER
+// Sidebar.jsx - WITH CSS MODULES + REACT ROUTER (FIXED TOGGLE)
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, LayoutDashboard, Info, GraduationCap, Mail, LogOut, User } from 'lucide-react';
@@ -36,7 +37,9 @@ const Sidebar = () => {
   const location = useLocation();
   const { isSidebarOpen, closeSidebar } = useSidebarContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isTeacherMode, setIsTeacherMode] = useState(false);
+  
+  // Check if current page is teacher page
+  const isTeacherMode = location.pathname === '/teacher';
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -54,9 +57,18 @@ const Sidebar = () => {
     }
   };
 
-  const toggleMode = () => {
-    setIsTeacherMode(!isTeacherMode);
-    console.log(`Switched to ${!isTeacherMode ? 'Teacher' : 'Student'} mode`);
+  const handleModeToggle = () => {
+    // If on teacher page, go to home (student mode)
+    // If on any other page, go to teacher page (teacher mode)
+    if (isTeacherMode) {
+      navigate('/');
+    } else {
+      navigate('/teacher');
+    }
+    
+    if (window.innerWidth < 1024) {
+      closeSidebar();
+    }
   };
 
   const menuItems = [
@@ -67,8 +79,7 @@ const Sidebar = () => {
       id: 'mode', 
       label: isTeacherMode ? 'Student' : 'Teacher', 
       icon: isTeacherMode ? User : GraduationCap,
-      path: '/teacher',
-      action: toggleMode
+      action: handleModeToggle
     },
     { id: 'contact', label: 'Contact Us', icon: Mail, path: '/contact' },
   ];
@@ -112,7 +123,16 @@ const Sidebar = () => {
             </div>
           )}
 
+          {/* Demo Toggle (Remove in production) */}
+          <div className={styles.sidebarDemo}>
+            <button
+              onClick={() => setIsAuthenticated(!isAuthenticated)}
+              className={styles.sidebarDemoBtn}
+            >
+              🔄 Toggle Auth (Demo)
+            </button>
           </div>
+        </div>
       </aside>
     </>
   );

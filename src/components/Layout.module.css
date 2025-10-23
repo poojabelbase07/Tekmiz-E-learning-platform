@@ -1,0 +1,28 @@
+/* components/Layout.module.css */
+
+.layout {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.layoutMain {
+  padding-top: 5rem; /* Increased: Space for fixed navbar (80px) */
+  padding-left: 0;
+  min-height: 100vh;
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Desktop: Add left padding for sidebar */
+@media (min-width: 1024px) {
+  .layoutMain {
+    padding-left: 17rem; /* Increased: Space for sidebar + some breathing room (272px) */
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 1023px) {
+  .layoutMain {
+    padding-left: 0;
+    padding-top: 5rem;
+  }
+}

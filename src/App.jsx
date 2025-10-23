@@ -1,48 +1,31 @@
-/*
-import React from "react";
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
-import SidebarContext from "./context/SidebarContext";
-import Home from "./components/Home";
-import Footer from "./components/Footer";
-
-function App() {
-
-  return(
-    <>
-    
-    <Navbar />
-    <Sidebar />
-    <SidebarContext />
-    <Home />
-    <Footer />
-    </>
-  );
-}
-
-export default App;
-*/
-// App.jsx - WITH CONTEXT (Even Cleaner!)
+// App.jsx - Updated with PlaylistsContext
 import React from 'react';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
+import { Routes, Route } from 'react-router-dom';
 import { SidebarProvider } from './context/SidebarContext';
-import './App.css';
+import { PlaylistsProvider } from './context/PlaylistContext';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
+import About from './pages/About';
+import Teacher from './pages/Teacher';
+import Contact from './pages/Contact';
+import PlaylistDetail from './pages/PlaylistDetail';
 
 function App() {
   return (
     <SidebarProvider>
-      <div className="app">
-        <Navbar />
-        <Sidebar />
-        
-        <main className="main-content">
-          <div className="content-wrapper">
-            <h1>Welcome to Tekmiz!</h1>
-            <p>Your e-learning platform</p>
-          </div>
-        </main>
-      </div>
+      <PlaylistsProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="about" element={<About />} />
+            <Route path="teacher" element={<Teacher />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="playlist/:id" element={<PlaylistDetail />} />
+          </Route>
+        </Routes>
+      </PlaylistsProvider>
     </SidebarProvider>
   );
 }
