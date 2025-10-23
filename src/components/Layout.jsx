@@ -14,9 +14,8 @@ const Layout = () => {
       
       <main className={styles.layoutMain}>
         <Outlet /> {/* This renders the current page (Home, Dashboard, etc.) */}
+        <Footer />
       </main>
-
-      <Footer />
     </div>
   );
 };
