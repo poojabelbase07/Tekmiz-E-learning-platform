@@ -1,11 +1,16 @@
 // pages/Teacher.jsx - Teacher Dashboard
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { usePlaylistsContext } from '../context/PlaylistContext';
 import styles from './Teacher.module.css';
 
 const Teacher = () => {
   const { playlists, addPlaylist, deletePlaylist } = usePlaylistsContext();
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  // Filter to show only teacher's playlists (for demo, showing playlists by "Pooja")
+  const teacherPlaylists = useMemo(() => {
+    return playlists.filter(p => p.author === 'Pooja');
+  }, [playlists]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -27,8 +32,8 @@ const Teacher = () => {
   ];
 
   const analytics = {
-    totalViews: 2140,
-    totalLikes: 156,
+    totalViews: playlists.reduce((sum, p) => sum + (p.views || 0), 0),
+    totalLikes: playlists.reduce((sum, p) => sum + (p.likes || 0), 0),
     totalPlaylists: playlists.length,
     trendingCount: playlists.filter(p => p.trending).length
   };
@@ -49,19 +54,12 @@ const Teacher = () => {
   const handleCreatePlaylist = (e) => {
     e.preventDefault();
     
-    // Create new playlist
-    const newPlaylist = {
-      id: playlists.length + 1,
+    // Add playlist using context
+    const newPlaylist = addPlaylist({
       title: formData.title,
       thumbnail: '📚', // Default emoji for demo
       category: formData.category,
-      resourcesCount: 0,
-      views: 0,
-      likes: 0,
-      trending: false
-    };
-
-    setPlaylists([newPlaylist, ...playlists]);
+    });
     
     // Reset form and close modal
     setFormData({
@@ -72,12 +70,12 @@ const Teacher = () => {
     });
     setShowCreateModal(false);
     
-    alert('🎉 Playlist created successfully!');
+    alert('🎉 Playlist created successfully! Check the home page.');
   };
 
   const handleDeletePlaylist = (id) => {
     if (window.confirm('Are you sure you want to delete this playlist?')) {
-      setPlaylists(playlists.filter(p => p.id !== id));
+      deletePlaylist(id);
     }
   };
 
