@@ -122,16 +122,6 @@ const Sidebar = () => {
               </button>
             </div>
           )}
-
-          {/* Demo Toggle (Remove in production) */}
-          <div className={styles.sidebarDemo}>
-            <button
-              onClick={() => setIsAuthenticated(!isAuthenticated)}
-              className={styles.sidebarDemoBtn}
-            >
-              🔄 Toggle Auth (Demo)
-            </button>
-          </div>
         </div>
       </aside>
     </>

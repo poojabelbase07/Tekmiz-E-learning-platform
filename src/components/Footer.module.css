@@ -4,6 +4,15 @@
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   color: white;
   margin-top: 4rem;
+  width: 100%;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Desktop: Add left margin for sidebar */
+@media (min-width: 1024px) {
+  .footer {
+    margin-left: 16rem; /* Same as sidebar width (256px) */
+  }
 }
 
 .footerContainer {
