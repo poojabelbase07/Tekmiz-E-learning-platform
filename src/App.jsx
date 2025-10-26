@@ -10,8 +10,8 @@ import About from './pages/About';
 import Teacher from './pages/Teacher';
 import Contact from './pages/Contact';
 import PlaylistDetail from './pages/PlaylistDetail';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   return (
@@ -38,4 +38,4 @@ function App() {
 }
 
 export default App;
-    
+         
