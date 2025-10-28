@@ -1,4 +1,4 @@
-// Navbar.jsx - WITH AUTH CONTEXT
+// Navbar.jsx - WITH AUTH CONTEXT (COMPLETE FIX)
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Menu, User } from 'lucide-react';
@@ -30,14 +30,9 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userRole');
-    setIsAuthenticated(false);
+    logout();
     setShowProfileMenu(false);
     navigate('/');
-    window.location.reload();
   };
 
   return (
@@ -81,7 +76,7 @@ const Navbar = () => {
 
         {/* Right Section: Auth Buttons or Profile */}
         <div className={styles.navbarRight}>
-          {!isAuthenticated ? (
+          {!currentUser ? (
             <>
               <button
                 onClick={() => navigate('/login')}
@@ -108,7 +103,7 @@ const Navbar = () => {
               {showProfileMenu && (
                 <div className={styles.profileMenu}>
                   <div className={styles.profileMenuHeader}>
-                    <p className={styles.profileMenuName}>{userName}</p>
+                    <p className={styles.profileMenuName}>{currentUser.name}</p>
                   </div>
                   <button 
                     className={styles.profileMenuItem}
