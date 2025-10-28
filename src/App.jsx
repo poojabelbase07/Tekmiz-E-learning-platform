@@ -3,7 +3,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { SidebarProvider } from './context/SidebarContext';
-import { PlaylistsProvider } from './context/PlaylistsContext';
+import { PlaylistsProvider } from './context/PlaylistContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -11,8 +11,8 @@ import About from './pages/About';
 import Teacher from './pages/Teacher';
 import Contact from './pages/Contact';
 import PlaylistDetail from './pages/PlaylistDetail';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   return (
