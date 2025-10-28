@@ -1,34 +1,9 @@
-/*
-import React from "react";
-//import "./Sidebar.css";
-// Sidebar section list
-function Sidebar() {
-
-    return(
-    // Home Dashboard About Teacher Contact us
-        <div className="sidebar">
-         <ul>
-        <li>Home</li>
-        <li>Dashboard</li>
-        <li>About</li>
-        <li>Teacher</li>
-        <li>Contact us</li>
-        </ul>
-        </div>
-
-    );
-}
-
-export default Sidebar;
-
-*/
-
-// Sidebar.jsx
-// Sidebar.jsx - WITH CSS MODULES + REACT ROUTER (FIXED TOGGLE)
+// Sidebar.jsx - WITH AUTH CONTEXT
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, LayoutDashboard, Info, GraduationCap, Mail, LogOut, User } from 'lucide-react';
 import { useSidebarContext } from '../context/SidebarContext';
+import { useAuth } from '../context/AuthContext';
 import TeacherModal from './TeacherModal';
 import styles from './Sidebar.module.css';
 
@@ -36,12 +11,10 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isSidebarOpen, closeSidebar } = useSidebarContext();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { currentUser, logout, isTeacher } = useAuth();
   const [showTeacherModal, setShowTeacherModal] = useState(false);
   
-  // Check if current page is teacher page AND user has teacher role
-  const userRole = localStorage.getItem('userRole') || '';
-  const isTeacher = userRole.includes('teacher');
+  // Check if current page is teacher page
   const isTeacherMode = location.pathname === '/teacher';
 
   const handleNavigation = (path) => {
@@ -53,39 +26,75 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    console.log('User logged out');
+    logout();
+    navigate('/');
     if (window.innerWidth < 1024) {
       closeSidebar();
     }
   };
 
-  const handleModeToggle = () => {
-    // If on teacher page, go to home (student mode)
-    // If on any other page, go to teacher page (teacher mode)
-    if (isTeacherMode) {
-      navigate('/');
+  const handleTeacherClick = () => {
+    // If not logged in, show teacher modal (which will ask to login)
+    if (!currentUser) {
+      setShowTeacherModal(true);
+      return;
+    }
+
+    // If logged in and already a teacher
+    if (isTeacher()) {
+      // Toggle between student and teacher mode
+      if (isTeacherMode) {
+        navigate('/'); // Go to home (student mode)
+      } else {
+        navigate('/teacher'); // Go to teacher dashboard
+      }
     } else {
-      navigate('/teacher');
+      // Logged in but not a teacher, show upgrade modal
+      setShowTeacherModal(true);
     }
-    
+
     if (window.innerWidth < 1024) {
       closeSidebar();
     }
   };
 
+  // Define menu items
   const menuItems = [
     { id: 'home', label: 'Home', icon: Home, path: '/' },
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { id: 'about', label: 'About', icon: Info, path: '/about' },
-    { 
-      id: 'mode', 
-      label: isTeacherMode ? 'Student' : 'Teacher', 
-      icon: isTeacherMode ? User : GraduationCap,
-      action: handleModeToggle
-    },
-    { id: 'contact', label: 'Contact Us', icon: Mail, path: '/contact' },
   ];
+
+  // Add Dashboard only if logged in
+  if (currentUser) {
+    menuItems.push({ 
+      id: 'dashboard', 
+      label: 'Dashboard', 
+      icon: LayoutDashboard, 
+      path: '/dashboard' 
+    });
+  }
+
+  menuItems.push({ id: 'about', label: 'About', icon: Info, path: '/about' });
+
+  // Teacher/Student mode toggle
+  if (currentUser && isTeacher()) {
+    // User is logged in AND is a teacher - show toggle
+    menuItems.push({ 
+      id: 'mode', 
+      label: isTeacherMode ? 'Student Mode' : 'Teacher Mode', 
+      icon: isTeacherMode ? User : GraduationCap,
+      action: handleTeacherClick
+    });
+  } else {
+    // User is not logged in OR not a teacher - show "Teacher"
+    menuItems.push({ 
+      id: 'teacher', 
+      label: 'Teacher', 
+      icon: GraduationCap,
+      action: handleTeacherClick
+    });
+  }
+
+  menuItems.push({ id: 'contact', label: 'Contact Us', icon: Mail, path: '/contact' });
 
   return (
     <>
@@ -117,7 +126,7 @@ const Sidebar = () => {
           </nav>
 
           {/* Logout Button (only when authenticated) */}
-          {isAuthenticated && (
+          {currentUser && (
             <div className={styles.sidebarFooter}>
               <button onClick={handleLogout} className={styles.sidebarLogout}>
                 <LogOut className={styles.sidebarIcon} />
@@ -125,18 +134,14 @@ const Sidebar = () => {
               </button>
             </div>
           )}
-
-          {/* Demo Toggle (Remove in production) */}
-          <div className={styles.sidebarDemo}>
-            <button
-              onClick={() => setIsAuthenticated(!isAuthenticated)}
-              className={styles.sidebarDemoBtn}
-            >
-              🔄 Toggle Auth (Demo)
-            </button>
-          </div>
         </div>
       </aside>
+
+      {/* Teacher Modal */}
+      <TeacherModal
+        isOpen={showTeacherModal}
+        onClose={() => setShowTeacherModal(false)}
+      />
     </>
   );
 };

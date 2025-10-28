@@ -1,31 +1,15 @@
-
-/*
-import React from "react";
-import "./Home.css";
-
-function Home() {
-
-    return(
-        <div className="home">   
-        <h1> Welcome to Tekmiz</h1>
-        </div>
-    );
-}
-
-export default Home;
-
-*/
-
-// pages/Home.jsx
+// pages/Home.jsx - WITH AUTH CONTEXT
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlaylistsContext } from '../context/PlaylistContext';
+import { useAuth } from '../context/AuthContext';
 import TeacherModal from '../components/TeacherModal';
 import styles from './Home.module.css';
 
 const Home = () => {
   const navigate = useNavigate();
   const { playlists } = usePlaylistsContext();
+  const { currentUser, isTeacher } = useAuth();
   const [showTeacherModal, setShowTeacherModal] = useState(false);
 
   const topCategories = [
@@ -38,19 +22,33 @@ const Home = () => {
   ];
 
   const handlePlaylistClick = (id) => {
+    // Check if user is logged in before accessing playlist
+    if (!currentUser) {
+      // Not logged in, redirect to login
+      navigate('/login');
+      return;
+    }
+    // Logged in, navigate to playlist
     navigate(`/playlist/${id}`);
   };
 
- /* writing this lead me directly to teacher section and not to register section
- const handleBecomeTeacher = () => {
-    navigate('/teacher');
-  };
-  */
-
   const handleBecomeTeacher = () => {
-  setShowTeacherModal(true);
-};
+    // Check if user is logged in
+    if (!currentUser) {
+      // Not logged in, show modal that will redirect to login/register
+      setShowTeacherModal(true);
+      return;
+    }
 
+    // User is logged in
+    if (isTeacher()) {
+      // Already a teacher, go to teacher dashboard
+      navigate('/teacher');
+    } else {
+      // Not a teacher yet, show upgrade modal
+      setShowTeacherModal(true);
+    }
+  };
 
   return (
     <div className={styles.homeContainer}>
@@ -74,12 +72,16 @@ const Home = () => {
 
           {/* Right Side - Become Teacher */}
           <div className={styles.teacherCard}>
-            <h3 className={styles.teacherTitle}>Become Teacher</h3>
+            <h3 className={styles.teacherTitle}>
+              {currentUser && isTeacher() ? 'Go to Teacher Dashboard' : 'Become Teacher'}
+            </h3>
             <p className={styles.teacherDescription}>
-              Share your knowledge and inspire learners worldwide.
+              {currentUser && isTeacher() 
+                ? 'Manage your playlists and inspire learners.' 
+                : 'Share your knowledge and inspire learners worldwide.'}
             </p>
             <button className={styles.teacherButton} onClick={handleBecomeTeacher}>
-              Get Started
+              {currentUser && isTeacher() ? '🎓 Go to Dashboard' : '🚀 Get Started'}
             </button>
           </div>
         </div>
@@ -114,12 +116,12 @@ const Home = () => {
           ))}
         </div>
       </section>
-       {/* ✅ Include Modal */}
+
+      {/* Teacher Modal */}
       <TeacherModal
         isOpen={showTeacherModal}
         onClose={() => setShowTeacherModal(false)}
       />
-      
     </div>
   );
 };
