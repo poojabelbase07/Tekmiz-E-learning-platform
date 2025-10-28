@@ -14,6 +14,8 @@ const Footer = () => {
   const [isTeacherMode, setIsTeacherMode] = useState(false); // optional, if have toggle logic
   const currentYear = new Date().getFullYear();
 
+   console.log("👀 Footer rendered, showTeacherModal =", showTeacherModal);
+  /*
   const handleTeacherClick = () => {
   // If not logged in, show teacher modal (ask to login)
   if (!currentUser) {
@@ -32,6 +34,32 @@ const Footer = () => {
     }
   } else {
     // Logged in but not yet a teacher
+    setShowTeacherModal(true);
+  }
+};
+*/
+const handleTeacherClick = () => {
+  console.log("✅ Teacher button clicked");
+  console.log("CurrentUser:", currentUser);
+  console.log("IsTeacher:", isTeacher ? isTeacher() : "no function");
+
+  if (!currentUser) {
+    console.log("➡️ Not logged in, showing modal");
+    setShowTeacherModal(true);
+    return;
+  }
+
+  if (isTeacher && isTeacher()) {
+    console.log("➡️ Logged in as teacher, navigating...");
+    if (isTeacherMode) {
+      navigate('/');
+      setIsTeacherMode(false);
+    } else {
+      navigate('/teacher');
+      setIsTeacherMode(true);
+    }
+  } else {
+    console.log("➡️ Logged in but not teacher, showing modal");
     setShowTeacherModal(true);
   }
 };
@@ -175,8 +203,11 @@ const Footer = () => {
         </div>
       </div>
 
-      {showTeacherModal && (
-  <TeacherModal onClose={() => setShowTeacherModal(false)} />
+     {showTeacherModal && (
+  <TeacherModal 
+    isOpen={showTeacherModal}
+    onClose={() => setShowTeacherModal(false)} 
+  />
 )}
     </footer>
   );
