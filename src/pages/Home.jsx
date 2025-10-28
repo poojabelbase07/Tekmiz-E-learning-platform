@@ -16,15 +16,17 @@ export default Home;
 
 */
 
-// pages/Home.jsx// pages/Home.jsx// pages/Home.jsx// pages/Home.jsx
-import React from 'react';
+// pages/Home.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlaylistsContext } from '../context/PlaylistContext';
+import TeacherModal from '../components/TeacherModal';
 import styles from './Home.module.css';
 
 const Home = () => {
   const navigate = useNavigate();
   const { playlists } = usePlaylistsContext();
+  const [showTeacherModal, setShowTeacherModal] = useState(false);
 
   const topCategories = [
     { name: 'Web Development', icon: '💻' },
@@ -39,9 +41,16 @@ const Home = () => {
     navigate(`/playlist/${id}`);
   };
 
-  const handleBecomeTeacher = () => {
+ /* writing this lead me directly to teacher section and not to register section
+ const handleBecomeTeacher = () => {
     navigate('/teacher');
   };
+  */
+
+  const handleBecomeTeacher = () => {
+  setShowTeacherModal(true);
+};
+
 
   return (
     <div className={styles.homeContainer}>
@@ -105,6 +114,12 @@ const Home = () => {
           ))}
         </div>
       </section>
+       {/* ✅ Include Modal */}
+      <TeacherModal
+        isOpen={showTeacherModal}
+        onClose={() => setShowTeacherModal(false)}
+      />
+      
     </div>
   );
 };

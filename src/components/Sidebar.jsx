@@ -24,12 +24,12 @@ export default Sidebar;
 */
 
 // Sidebar.jsx
-// Sidebar.jsx - WITH CSS MODULES + REACT ROUTER
 // Sidebar.jsx - WITH CSS MODULES + REACT ROUTER (FIXED TOGGLE)
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, LayoutDashboard, Info, GraduationCap, Mail, LogOut, User } from 'lucide-react';
 import { useSidebarContext } from '../context/SidebarContext';
+import TeacherModal from './TeacherModal';
 import styles from './Sidebar.module.css';
 
 const Sidebar = () => {
@@ -37,8 +37,11 @@ const Sidebar = () => {
   const location = useLocation();
   const { isSidebarOpen, closeSidebar } = useSidebarContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showTeacherModal, setShowTeacherModal] = useState(false);
   
-  // Check if current page is teacher page
+  // Check if current page is teacher page AND user has teacher role
+  const userRole = localStorage.getItem('userRole') || '';
+  const isTeacher = userRole.includes('teacher');
   const isTeacherMode = location.pathname === '/teacher';
 
   const handleNavigation = (path) => {
@@ -122,6 +125,16 @@ const Sidebar = () => {
               </button>
             </div>
           )}
+
+          {/* Demo Toggle (Remove in production) */}
+          <div className={styles.sidebarDemo}>
+            <button
+              onClick={() => setIsAuthenticated(!isAuthenticated)}
+              className={styles.sidebarDemoBtn}
+            >
+              🔄 Toggle Auth (Demo)
+            </button>
+          </div>
         </div>
       </aside>
     </>
