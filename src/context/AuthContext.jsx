@@ -1,5 +1,13 @@
-// context/AuthContext.jsx
+// context/AuthContext.jsx - WITH FIREBASE
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from 'firebase/auth';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
 
 const AuthContext = createContext();
 
@@ -15,133 +23,180 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on mount
+  // Listen to Firebase auth state changes
   useEffect(() => {
-    checkAuthState();
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // User is logged in, fetch their data from Firestore
+        try {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setCurrentUser({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              name: userData.name,
+              roles: userData.roles || ['student'],
+              teacherProfile: userData.teacherProfile || null,
+              createdAt: userData.createdAt
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      } else {
+        // User is logged out
+        setCurrentUser(null);
+      }
+      setLoading(false);
+    });
+
+    // Cleanup subscription
+    return unsubscribe;
   }, []);
 
-  const checkAuthState = () => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    
-    if (isLoggedIn) {
-      const userData = {
-        uid: localStorage.getItem('userId') || 'mock-uid',
-        email: localStorage.getItem('userEmail'),
-        name: localStorage.getItem('userName'),
-        roles: (localStorage.getItem('userRole') || 'student').split(','),
-        teacherProfile: localStorage.getItem('teacherInterests') ? {
-          interests: JSON.parse(localStorage.getItem('teacherInterests')),
-          bio: localStorage.getItem('teacherBio') || ''
-        } : null
-      };
-      setCurrentUser(userData);
-    } else {
-      setCurrentUser(null);
-    }
-    
-    setLoading(false);
-  };
-
-  // Mock Register (will replace with Firebase)
+  // Register new user
   const register = async (name, email, password) => {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Create Firebase auth user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
+      // Create user document in Firestore
       const userData = {
-        uid: 'user_' + Date.now(),
-        email,
-        name,
-        roles: ['student'],
-        teacherProfile: null
+        uid: user.uid,
+        name: name,
+        email: email,
+        roles: ['student'], // Default role
+        teacherProfile: null,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
       };
 
-      // Store in localStorage (temporary - will use Firebase)
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userId', userData.uid);
-      localStorage.setItem('userEmail', userData.email);
-      localStorage.setItem('userName', userData.name);
-      localStorage.setItem('userRole', 'student');
+      await setDoc(doc(db, 'users', user.uid), userData);
 
-      setCurrentUser(userData);
+      // Update local state
+      setCurrentUser({
+        uid: user.uid,
+        email: email,
+        name: name,
+        roles: ['student'],
+        teacherProfile: null,
+        createdAt: userData.createdAt
+      });
+
       return { success: true, user: userData };
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error('Registration error:', error);
+      return { 
+        success: false, 
+        error: getErrorMessage(error.code) 
+      };
     }
   };
 
-  // Mock Login (will replace with Firebase)
+  // Login existing user
   const login = async (email, password) => {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Sign in with Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      // Check if user exists (mock)
-      const existingEmail = localStorage.getItem('userEmail');
-      const existingName = localStorage.getItem('userName');
+      // Fetch user data from Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
 
-      const userData = {
-        uid: localStorage.getItem('userId') || 'user_' + Date.now(),
-        email: existingEmail || email,
-        name: existingName || 'User',
-        roles: (localStorage.getItem('userRole') || 'student').split(','),
-        teacherProfile: localStorage.getItem('teacherInterests') ? {
-          interests: JSON.parse(localStorage.getItem('teacherInterests')),
-          bio: localStorage.getItem('teacherBio') || ''
-        } : null
-      };
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
 
-      localStorage.setItem('isLoggedIn', 'true');
-      setCurrentUser(userData);
-      return { success: true, user: userData };
+        // Update last login
+        await updateDoc(userDocRef, {
+          lastLogin: new Date().toISOString()
+        });
+
+        // Update local state
+        setCurrentUser({
+          uid: user.uid,
+          email: user.email,
+          name: userData.name,
+          roles: userData.roles || ['student'],
+          teacherProfile: userData.teacherProfile || null,
+          createdAt: userData.createdAt
+        });
+
+        return { success: true, user: userData };
+      } else {
+        throw new Error('User data not found');
+      }
     } catch (error) {
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        error: getErrorMessage(error.code) 
+      };
+    }
+  };
+
+  // Logout user
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setCurrentUser(null);
+      return { success: true };
+    } catch (error) {
+      console.error('Logout error:', error);
       return { success: false, error: error.message };
     }
   };
 
-  // Logout
-  const logout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('teacherInterests');
-    localStorage.removeItem('teacherBio');
-    setCurrentUser(null);
-  };
-
-  // Upgrade to Teacher
+  // Upgrade user to teacher
   const upgradeToTeacher = async (interests, bio) => {
     try {
       if (!currentUser) {
         throw new Error('User not logged in');
       }
 
-      // Add teacher role
-      const updatedRoles = currentUser.roles.includes('teacher') 
-        ? currentUser.roles 
-        : [...currentUser.roles, 'teacher'];
+      // Check if already a teacher
+      if (currentUser.roles.includes('teacher')) {
+        return { 
+          success: false, 
+          error: 'You are already a teacher' 
+        };
+      }
 
+      // Add teacher role
+      const updatedRoles = [...currentUser.roles, 'teacher'];
+      const teacherProfile = {
+        interests: interests,
+        bio: bio,
+        activatedAt: new Date().toISOString()
+      };
+
+      // Update Firestore
+      const userDocRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userDocRef, {
+        roles: updatedRoles,
+        teacherProfile: teacherProfile
+      });
+
+      // Update local state
       const updatedUser = {
         ...currentUser,
         roles: updatedRoles,
-        teacherProfile: {
-          interests,
-          bio,
-          activatedAt: new Date().toISOString()
-        }
+        teacherProfile: teacherProfile
       };
 
-      // Update localStorage
-      localStorage.setItem('userRole', updatedRoles.join(','));
-      localStorage.setItem('teacherInterests', JSON.stringify(interests));
-      localStorage.setItem('teacherBio', bio);
-
       setCurrentUser(updatedUser);
+
       return { success: true, user: updatedUser };
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error('Upgrade to teacher error:', error);
+      return { 
+        success: false, 
+        error: error.message 
+      };
     }
   };
 
@@ -153,6 +208,26 @@ export const AuthProvider = ({ children }) => {
   // Check if user is teacher
   const isTeacher = () => {
     return hasRole('teacher');
+  };
+
+  // Helper function to get user-friendly error messages
+  const getErrorMessage = (errorCode) => {
+    switch (errorCode) {
+      case 'auth/email-already-in-use':
+        return 'This email is already registered. Please login.';
+      case 'auth/invalid-email':
+        return 'Invalid email address.';
+      case 'auth/weak-password':
+        return 'Password should be at least 6 characters.';
+      case 'auth/user-not-found':
+        return 'No account found with this email.';
+      case 'auth/wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      default:
+        return 'An error occurred. Please try again.';
+    }
   };
 
   const value = {
