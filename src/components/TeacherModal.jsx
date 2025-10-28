@@ -1,17 +1,16 @@
-// components/TeacherModal.jsx
+// components/TeacherModal.jsx - COMPLETE FIX
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import styles from './TeacherModal.module.css';
 
 const TeacherModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
-  const [step, setStep] = useState('check'); // 'check' or 'upgrade'
+  const { currentUser, upgradeToTeacher } = useAuth();
   const [teacherData, setTeacherData] = useState({
     interests: [],
     bio: ''
   });
-
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   const interests = [
     'Web Development',
@@ -34,20 +33,15 @@ const TeacherModal = ({ isOpen, onClose }) => {
     }));
   };
 
-  const handleUpgrade = () => {
-    // Add teacher role to existing user
-    const currentRole = localStorage.getItem('userRole') || 'student';
-    const roles = currentRole.includes('teacher') ? currentRole : `${currentRole},teacher`;
+  const handleUpgrade = async () => {
+    const result = await upgradeToTeacher(teacherData.interests, teacherData.bio);
     
-    localStorage.setItem('userRole', roles);
-    localStorage.setItem('teacherInterests', JSON.stringify(teacherData.interests));
-    localStorage.setItem('teacherBio', teacherData.bio);
-
-    // Success!
-    alert('🎉 Welcome to Teacher Mode!');
-    onClose();
-    navigate('/teacher');
-    window.location.reload();
+    if (result.success) {
+      onClose();
+      navigate('/teacher');
+    } else {
+      alert('Failed to upgrade. Please try again.');
+    }
   };
 
   if (!isOpen) return null;
@@ -57,7 +51,7 @@ const TeacherModal = ({ isOpen, onClose }) => {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         
         {/* Auth Check Step */}
-        {!isLoggedIn ? (
+        {!currentUser ? (
           <>
             <div className={styles.modalHeader}>
               <h2 className={styles.modalTitle}>🎓 Become a Teacher</h2>
