@@ -1,27 +1,41 @@
-/*
-// Footer section
-import React from "react";
-import "./Footer.css";
 
-function Footer() {
-  return (
-    <footer className="footer">
-      <p>© 2025 Tekmiz. All rights reserved.</p>
-    </footer>
-  );
-}
-
-export default Footer;
-*/
 
 // components/Footer.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import TeacherModal from './TeacherModal';
 import styles from './Footer.module.css';
 
 const Footer = () => {
   const navigate = useNavigate();
+  const { currentUser, isTeacher } = useAuth();
+  const [showTeacherModal, setShowTeacherModal] = useState(false);
+  const [isTeacherMode, setIsTeacherMode] = useState(false); // optional, if have toggle logic
   const currentYear = new Date().getFullYear();
+
+  const handleTeacherClick = () => {
+  // If not logged in, show teacher modal (ask to login)
+  if (!currentUser) {
+    setShowTeacherModal(true);
+    return;
+  }
+
+  // If logged in and already a teacher
+  if (isTeacher()) {
+    if (isTeacherMode) {
+      navigate('/'); // go to student home
+      setIsTeacherMode(false);
+    } else {
+      navigate('/teacher'); // go to teacher dashboard
+      setIsTeacherMode(true);
+    }
+  } else {
+    // Logged in but not yet a teacher
+    setShowTeacherModal(true);
+  }
+};
+
 
   const footerLinks = {
     platform: [
@@ -113,7 +127,13 @@ const Footer = () => {
                 {footerLinks.resources.map((link) => (
                   <li key={link.name}>
                     <button
-                      onClick={() => handleLinkClick(link.path)}
+                      onClick={() =>  {
+                         if (link.name === 'Become a Teacher') {
+                           handleTeacherClick();
+                        } else {
+                          handleLinkClick(link.path);
+                        }
+                        }}
                       className={styles.link}
                     >
                       {link.name}
@@ -154,6 +174,10 @@ const Footer = () => {
           </p>
         </div>
       </div>
+
+      {showTeacherModal && (
+  <TeacherModal onClose={() => setShowTeacherModal(false)} />
+)}
     </footer>
   );
 };

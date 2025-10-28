@@ -1,10 +1,11 @@
-// App.jsx - Updated with AuthContext
+// App.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import { SidebarProvider } from './context/SidebarContext';
+import { AuthProvider } from './context/AuthContext'; // Add this
 import { PlaylistsProvider } from './context/PlaylistContext';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import About from './pages/About';
@@ -16,22 +17,49 @@ import Register from './components/Register';
 
 function App() {
   return (
-    <AuthProvider>
+    <AuthProvider> {/* Wrap everything in AuthProvider */}
       <SidebarProvider>
         <PlaylistsProvider>
           <Routes>
-            {/* Auth Routes (No Layout) */}
+            {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Main Routes (With Layout) */}
+            {/* Main Routes */}
             <Route path="/" element={<Layout />}>
+              {/* Public Routes */}
               <Route index element={<Home />} />
-              <Route path="dashboard" element={<Dashboard />} />
               <Route path="about" element={<About />} />
-              <Route path="teacher" element={<Teacher />} />
               <Route path="contact" element={<Contact />} />
-              <Route path="playlist/:id" element={<PlaylistDetail />} />
+
+              {/* Protected Routes - Need Login */}
+              <Route 
+                path="dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* Teacher Route - Need Login + Teacher Role */}
+              <Route 
+                path="teacher" 
+                element={
+                  <ProtectedRoute requireTeacher={true}>
+                    <Teacher />
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="playlist/:id" 
+                element={
+                  <ProtectedRoute>
+                    <PlaylistDetail />
+                  </ProtectedRoute>
+                } 
+              />
             </Route>
           </Routes>
         </PlaylistsProvider>
@@ -41,4 +69,3 @@ function App() {
 }
 
 export default App;
-           
