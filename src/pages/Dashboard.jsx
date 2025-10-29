@@ -1,10 +1,14 @@
 // pages/Dashboard.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
 import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  const { currentUser } = useAuth();
 
   // Mock user data - Replace with actual data from Firebase/Context later
   const userData = {
@@ -85,7 +89,7 @@ const Dashboard = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <h1 className={styles.pageTitle}>My Dashboard</h1>
+     <h1>Welcome back, {getFirstName(currentUser.name)}! 👋</h1>
 
       {/* User Profile Card */}
       <div className={styles.profileCard}>
