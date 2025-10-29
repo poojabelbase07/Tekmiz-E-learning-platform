@@ -1,16 +1,20 @@
-// pages/Teacher.jsx - Teacher Dashboard
+// pages/Teacher.jsx - Teacher Dashboard WITH REAL USER DATA
 import React, { useState, useMemo } from 'react';
 import { usePlaylistsContext } from '../context/PlaylistContext';
+import { useAuth } from '../context/AuthContext';
 import styles from './Teacher.module.css';
 
 const Teacher = () => {
   const { playlists, addPlaylist, deletePlaylist } = usePlaylistsContext();
+  const { currentUser } = useAuth(); // Get real user from AuthContext
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Filter to show only teacher's playlists (for demo, showing playlists by "Pooja")
+  // Filter to show only THIS teacher's playlists
   const teacherPlaylists = useMemo(() => {
-    return playlists.filter(p => p.author === 'Pooja');
-  }, [playlists]);
+    if (!currentUser) return [];
+    // Filter playlists by current user's UID
+    return playlists.filter(p => p.authorId === currentUser.uid);
+  }, [playlists, currentUser]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -31,12 +35,13 @@ const Teacher = () => {
     'DevOps'
   ];
 
-  const analytics = {
-    totalViews: playlists.reduce((sum, p) => sum + (p.views || 0), 0),
-    totalLikes: playlists.reduce((sum, p) => sum + (p.likes || 0), 0),
-    totalPlaylists: playlists.length,
-    trendingCount: playlists.filter(p => p.trending).length
-  };
+  // Analytics for THIS teacher's playlists only
+  const analytics = useMemo(() => ({
+    totalViews: teacherPlaylists.reduce((sum, p) => sum + (p.views || 0), 0),
+    totalLikes: teacherPlaylists.reduce((sum, p) => sum + (p.likes || 0), 0),
+    totalPlaylists: teacherPlaylists.length,
+    trendingCount: teacherPlaylists.filter(p => p.trending).length
+  }), [teacherPlaylists]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,11 +59,19 @@ const Teacher = () => {
   const handleCreatePlaylist = (e) => {
     e.preventDefault();
     
-    // Add playlist using context
+    if (!currentUser) {
+      alert('Please login to create playlists');
+      return;
+    }
+    
+    // Add playlist using context with author info
     const newPlaylist = addPlaylist({
       title: formData.title,
+      description: formData.description,
       thumbnail: '📚', // Default emoji for demo
       category: formData.category,
+      author: currentUser.name, // Real user name
+      authorId: currentUser.uid, // Real user ID
     });
     
     // Reset form and close modal
@@ -85,12 +98,31 @@ const Teacher = () => {
     alert('Edit feature coming soon!');
   };
 
+  // Get first name from full name
+  const getFirstName = (fullName) => {
+    if (!fullName) return 'Teacher';
+    return fullName.split(' ')[0];
+  };
+
+  // Show loading if no user data yet
+  if (!currentUser) {
+    return (
+      <div className={styles.teacherContainer}>
+        <div style={{ textAlign: 'center', padding: '3rem' }}>
+          <h2>Loading teacher dashboard...</h2>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.teacherContainer}>
       {/* Welcome Section */}
       <section className={styles.welcomeSection}>
         <div className={styles.welcomeContent}>
-          <h1 className={styles.welcomeTitle}>Welcome back, Pooja! 👋</h1>
+          <h1 className={styles.welcomeTitle}>
+            Welcome back, {getFirstName(currentUser.name)}! 👋
+          </h1>
           <p className={styles.welcomeSubtitle}>
             Ready to inspire more learners today?
           </p>
@@ -125,7 +157,7 @@ const Teacher = () => {
           <div className={styles.analyticsCard}>
             <div className={styles.analyticsIcon}>📚</div>
             <div className={styles.analyticsContent}>
-              <h3 className={styles.analyticsLabel}>Playlists</h3>
+              <h3 className={styles.analyticsLabel}>My Playlists</h3>
               <p className={styles.analyticsNumber}>{analytics.totalPlaylists}</p>
             </div>
           </div>
@@ -143,41 +175,58 @@ const Teacher = () => {
       {/* My Playlists Section */}
       <section className={styles.playlistsSection}>
         <h2 className={styles.sectionTitle}>My Playlists</h2>
-        <div className={styles.playlistsGrid}>
-          {playlists.map((playlist) => (
-            <div key={playlist.id} className={styles.playlistCard}>
-              {playlist.trending && (
-                <div className={styles.trendingBadge}>🔥 Trending</div>
-              )}
-              <div className={styles.playlistThumbnail}>
-                <span className={styles.thumbnailIcon}>{playlist.thumbnail}</span>
-              </div>
-              <div className={styles.playlistContent}>
-                <h3 className={styles.playlistTitle}>{playlist.title}</h3>
-                <p className={styles.playlistCategory}>{playlist.category}</p>
-                <div className={styles.playlistStats}>
-                  <span>📝 {playlist.resourcesCount} resources</span>
-                  <span>👁️ {playlist.views}</span>
-                  <span>❤️ {playlist.likes}</span>
+        
+        {teacherPlaylists.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>📚</div>
+            <h3 className={styles.emptyTitle}>No playlists yet</h3>
+            <p className={styles.emptyText}>
+              Create your first playlist and start sharing your knowledge!
+            </p>
+            <button 
+              className={styles.createButton}
+              onClick={() => setShowCreateModal(true)}
+            >
+              + Create Your First Playlist
+            </button>
+          </div>
+        ) : (
+          <div className={styles.playlistsGrid}>
+            {teacherPlaylists.map((playlist) => (
+              <div key={playlist.id} className={styles.playlistCard}>
+                {playlist.trending && (
+                  <div className={styles.trendingBadge}>🔥 Trending</div>
+                )}
+                <div className={styles.playlistThumbnail}>
+                  <span className={styles.thumbnailIcon}>{playlist.thumbnail}</span>
+                </div>
+                <div className={styles.playlistContent}>
+                  <h3 className={styles.playlistTitle}>{playlist.title}</h3>
+                  <p className={styles.playlistCategory}>{playlist.category}</p>
+                  <div className={styles.playlistStats}>
+                    <span>📝 {playlist.resourcesCount} resources</span>
+                    <span>👁️ {playlist.views}</span>
+                    <span>❤️ {playlist.likes}</span>
+                  </div>
+                </div>
+                <div className={styles.playlistActions}>
+                  <button 
+                    className={styles.editButton}
+                    onClick={() => handleEditPlaylist(playlist.id)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className={styles.deleteButton}
+                    onClick={() => handleDeletePlaylist(playlist.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
-              <div className={styles.playlistActions}>
-                <button 
-                  className={styles.editButton}
-                  onClick={() => handleEditPlaylist(playlist.id)}
-                >
-                  Edit
-                </button>
-                <button 
-                  className={styles.deleteButton}
-                  onClick={() => handleDeletePlaylist(playlist.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Create Playlist Modal */}
