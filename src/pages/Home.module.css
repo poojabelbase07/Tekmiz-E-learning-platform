@@ -1,317 +1,38 @@
-/* pages/Home.module.css */
+/* Blue Theme - Professional & Trustworthy */
+/* Add this to your global CSS or each component's CSS module */
 
-.homeContainer {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  animation: fadeIn 0.4s ease-out;
+:root {
+  /* Primary Colors */
+  --primary-color: #2563EB; /* Blue 600 */
+  --primary-dark: #1E40AF; /* Blue 700 */
+  --primary-light: #3B82F6; /* Blue 500 */
+  
+  /* Gradient */
+  --gradient-start: #3B82F6;
+  --gradient-end: #1E40AF;
+  
+  /* Accent Colors */
+  --accent-light: #DBEAFE; /* Blue 100 */
+  --accent-lighter: #EFF6FF; /* Blue 50 */
+  
+  /* Background */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F9FAFB;
+  
+  /* Text */
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Example Usage */
+.heroSection {
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
 }
 
-/* Section Headings */
-.sectionHeading {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
+.button {
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
 }
 
-/* Quick Options Section */
-.quickOptions {
-  margin-bottom: 3rem;
-}
-
-.optionsGrid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
-}
-
-/* Category Card (Left) - SINGLE CARD NOW */
-.categoryCard {
-  background: white;
-  padding: 1.75rem;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.categoryCard:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-
-.categoryTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 1rem;
-  letter-spacing: -0.01em;
-}
-
-.categoryChips {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-}
-
-.categoryChip {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-  border: 1.5px solid #e9d5ff;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #7c3aed;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-align: left;
-}
-
-.categoryChip:hover {
-  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-  border-color: #9333ea;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.15);
-}
-
-.chipIcon {
-  font-size: 1.25rem;
-}
-
-/* Teacher Card (Right) - SMALLER NOW */
-.teacherCard {
-  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 50%, #6d28d9 100%);
-  padding: 1.75rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(147, 51, 234, 0.25);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  min-height: fit-content;
-}
-
-.teacherCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
-}
-
-.teacherCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(147, 51, 234, 0.35);
-}
-
-.teacherTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 0.75rem;
-  position: relative;
-  letter-spacing: -0.02em;
-}
-
-.teacherDescription {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.5;
-  margin-bottom: 1.25rem;
-  position: relative;
-}
-
-.teacherButton {
-  padding: 0.75rem 1.5rem;
-  background: white;
-  color: #9333ea;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  position: relative;
-  letter-spacing: 0.01em;
-}
-
-.teacherButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  background: #faf5ff;
-}
-
-.teacherButton:active {
-  transform: translateY(0);
-}
-
-/* Divider */
-.divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #e5e7eb 50%, transparent 100%);
-  margin: 3rem 0;
-}
-
-/* Explore Section */
-.exploreSection {
-  margin-bottom: 3rem;
-}
-
-.exploreHeading {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
-}
-
-.playlistGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-
-/* Playlist Card */
-.playlistCard {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-.playlistCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-}
-
-.thumbnail {
-  width: 100%;
-  height: 180px;
-  background: linear-gradient(135deg, #faf5ff 0%, #e0e7ff 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.thumbnail::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-}
-
-.thumbnailIcon {
-  font-size: 4rem;
-  position: relative;
-  z-index: 1;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.cardContent {
-  padding: 1.5rem;
-}
-
-.playlistTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.authorName {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.playlistMeta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #f3f4f6;
-}
-
-.metaItem {
-  font-size: 0.875rem;
-  color: #9ca3af;
-  font-weight: 500;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .optionsGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .playlistGrid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .homeContainer {
-    padding: 1.5rem;
-  }
-
-  .sectionHeading,
-  .exploreHeading {
-    font-size: 1.5rem;
-  }
-
-  .categoryChips {
-    grid-template-columns: 1fr;
-  }
-
-  .playlistGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .thumbnail {
-    height: 160px;
-  }
-
-  .thumbnailIcon {
-    font-size: 3rem;
-  }
+.statBox {
+  background: linear-gradient(135deg, var(--accent-lighter) 0%, var(--accent-light) 100%);
 }
