@@ -1,4 +1,5 @@
 // context/AuthContext.jsx - WITH FIREBASE
+/*
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   createUserWithEmailAndPassword,
@@ -248,3 +249,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+*/
