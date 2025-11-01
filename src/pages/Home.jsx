@@ -1,4 +1,4 @@
-// pages/Home.jsx - WITH AUTH CONTEXT
+// pages/Home.jsx - DYNAMIC (NO DUMMY DATA)
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlaylistsContext } from '../context/PlaylistContext';
@@ -8,7 +8,7 @@ import styles from './Home.module.css';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { playlists } = usePlaylistsContext();
+  const { playlists, loading } = usePlaylistsContext();
   const { currentUser, isTeacher } = useAuth();
   const [showTeacherModal, setShowTeacherModal] = useState(false);
 
@@ -24,30 +24,28 @@ const Home = () => {
   const handlePlaylistClick = (id) => {
     // Check if user is logged in before accessing playlist
     if (!currentUser) {
-      // Not logged in, redirect to login
       navigate('/login');
       return;
     }
-    // Logged in, navigate to playlist
     navigate(`/playlist/${id}`);
   };
 
   const handleBecomeTeacher = () => {
-    // Check if user is logged in
     if (!currentUser) {
-      // Not logged in, show modal that will redirect to login/register
       setShowTeacherModal(true);
       return;
     }
 
-    // User is logged in
     if (isTeacher()) {
-      // Already a teacher, go to teacher dashboard
       navigate('/teacher');
     } else {
-      // Not a teacher yet, show upgrade modal
       setShowTeacherModal(true);
     }
+  };
+
+  const handleCategoryClick = (categoryName) => {
+    // TODO: Implement category filtering
+    console.log('Category clicked:', categoryName);
   };
 
   return (
@@ -62,7 +60,11 @@ const Home = () => {
             <h3 className={styles.categoryTitle}>Top Categories</h3>
             <div className={styles.categoryChips}>
               {topCategories.map((cat, index) => (
-                <button key={index} className={styles.categoryChip}>
+                <button 
+                  key={index} 
+                  className={styles.categoryChip}
+                  onClick={() => handleCategoryClick(cat.name)}
+                >
                   <span className={styles.chipIcon}>{cat.icon}</span>
                   {cat.name}
                 </button>
@@ -94,27 +96,56 @@ const Home = () => {
       <section className={styles.exploreSection}>
         <h2 className={styles.exploreHeading}>Explore</h2>
         
-        <div className={styles.playlistGrid}>
-          {playlists.map((playlist) => (
-            <div 
-              key={playlist.id} 
-              className={styles.playlistCard}
-              onClick={() => handlePlaylistClick(playlist.id)}
-            >
-              <div className={styles.thumbnail}>
-                <span className={styles.thumbnailIcon}>{playlist.thumbnail}</span>
-              </div>
-              <div className={styles.cardContent}>
-                <h3 className={styles.playlistTitle}>{playlist.title}</h3>
-                <p className={styles.authorName}>{playlist.author}</p>
-                <div className={styles.playlistMeta}>
-                  <span className={styles.metaItem}>🎥 {playlist.videosCount} videos</span>
-                  <span className={styles.metaItem}>⭐ {playlist.rating}</span>
+        {loading ? (
+          <div className={styles.loadingState}>
+            <p>Loading playlists...</p>
+          </div>
+        ) : playlists.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>📚</div>
+            <h3 className={styles.emptyTitle}>No playlists yet</h3>
+            <p className={styles.emptyText}>
+              Be the first to create a playlist and share your knowledge!
+            </p>
+            {currentUser && (
+              <button 
+                className={styles.teacherButton}
+                onClick={handleBecomeTeacher}
+              >
+                Create Your First Playlist
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className={styles.playlistGrid}>
+            {playlists.map((playlist) => (
+              <div 
+                key={playlist.id} 
+                className={styles.playlistCard}
+                onClick={() => handlePlaylistClick(playlist.id)}
+              >
+                <div className={styles.thumbnail}>
+                  <span className={styles.thumbnailIcon}>{playlist.thumbnail}</span>
+                </div>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.playlistTitle}>{playlist.title}</h3>
+                  <p className={styles.authorName}>by {playlist.author}</p>
+                  <div className={styles.playlistMeta}>
+                    <span className={styles.metaItem}>
+                      📝 {playlist.resourcesCount || 0} resources
+                    </span>
+                    <span className={styles.metaItem}>
+                      👁️ {playlist.views || 0}
+                    </span>
+                    <span className={styles.metaItem}>
+                      ❤️ {playlist.likes || 0}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Teacher Modal */}
