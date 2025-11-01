@@ -93,6 +93,43 @@
   font-size: 1.25rem;
 }
 
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.emptyTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+}
+
+.emptyText {
+  font-size: 1.125rem;
+  color: #666;
+  margin: 0 0 2rem 0;
+  line-height: 1.7;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.125rem;
+  color: #666;
+}
+
 /* Teacher Card (Right) - SMALLER NOW */
 .teacherCard {
   background: linear-gradient(135deg, #9333ea 0%, #7c3aed 50%, #6d28d9 100%);
