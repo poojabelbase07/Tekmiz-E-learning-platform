@@ -42,7 +42,7 @@ const Login = () => {
 
     if (result.success) {
       // Login successful, redirect to dashboard
-      navigate('/dashboard');
+      navigate('/home');
     } else {
       // Login failed, show error
       setError(result.error);

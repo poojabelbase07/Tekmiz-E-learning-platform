@@ -112,7 +112,7 @@ const Dashboard = () => {
   return (
     <div className={styles.dashboardContainer}>
       <h1 className={styles.pageTitle}>
-        Welcome back, {getFirstName(currentUser.name)}! 👋
+        Welcome, {getFirstName(currentUser.name)}! 👋
       </h1>
 
       {/* User Profile Card */}
