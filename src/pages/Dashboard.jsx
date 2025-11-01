@@ -1,21 +1,28 @@
-// pages/Dashboard.jsx
+// pages/Dashboard.jsx - COMPLETE WORKING VERSION
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
 import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-
   const { currentUser } = useAuth();
 
-  // Mock user data - Replace with actual data from Firebase/Context later
-  const userData = {
-    name: 'Pooja',
-    email: 'pooja@tekmiz.com',
-    joinedDate: 'January 2025',
-    avatar: '👩‍💻'
+  // Helper Functions
+  const getFirstName = (fullName) => {
+    if (!fullName) return 'User';
+    return fullName.split(' ')[0];
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Recently';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  const getUserAvatar = () => {
+    if (!currentUser?.name) return '👤';
+    return currentUser.name.charAt(0).toUpperCase();
   };
 
   // Mock stats - Replace with actual data later
@@ -26,7 +33,7 @@ const Dashboard = () => {
     progress: 67
   };
 
-  // Mock liked playlists - Replace with actual data later
+  // Mock liked playlists
   const likedPlaylists = [
     { 
       id: 1, 
@@ -51,7 +58,7 @@ const Dashboard = () => {
     }
   ];
 
-  // Mock recent comments - Replace with actual data later
+  // Mock recent comments
   const recentComments = [
     { 
       id: 1, 
@@ -78,27 +85,46 @@ const Dashboard = () => {
   };
 
   const handleViewPlaylist = (id) => {
-    // Navigate to playlist detail page
     navigate(`/playlist/${id}`);
   };
 
   const handleEditProfile = () => {
-    // TODO: Implement edit profile functionality
     console.log('Edit profile clicked');
   };
 
+  // Loading state
+  if (!currentUser) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        flexDirection: 'column',
+        gap: '1rem'
+      }}>
+        <h2>Loading your dashboard...</h2>
+        <p>Please wait...</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.dashboardContainer}>
-     <h1>Welcome back, {getFirstName(currentUser.name)}! 👋</h1>
+      <h1 className={styles.pageTitle}>
+        Welcome back, {getFirstName(currentUser.name)}! 👋
+      </h1>
 
       {/* User Profile Card */}
       <div className={styles.profileCard}>
         <div className={styles.avatarSection}>
-          <div className={styles.avatar}>{userData.avatar}</div>
+          <div className={styles.avatar}>{getUserAvatar()}</div>
           <div className={styles.userInfo}>
-            <h2 className={styles.userName}>{userData.name}</h2>
-            <p className={styles.userEmail}>{userData.email}</p>
-            <p className={styles.joinedDate}>Member since {userData.joinedDate}</p>
+            <h2 className={styles.userName}>{currentUser.name}</h2>
+            <p className={styles.userEmail}>{currentUser.email}</p>
+            <p className={styles.joinedDate}>
+              Member since {formatDate(currentUser.createdAt)}
+            </p>
           </div>
         </div>
         <button className={styles.editProfileBtn} onClick={handleEditProfile}>
