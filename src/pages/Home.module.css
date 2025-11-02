@@ -352,3 +352,18 @@
     font-size: 3rem;
   }
 }
+
+
+/* Thumbnail Image */
+.thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.thumbnail {
+  /* Make sure thumbnail has these properties */
+  position: relative;
+  overflow: hidden;
+}

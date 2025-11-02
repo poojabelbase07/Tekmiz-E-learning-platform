@@ -480,3 +480,53 @@
   display: inline-block;
   margin-top: 1rem;
 }
+
+/* Image Preview */
+.imagePreview {
+  margin-top: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.previewImage {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  display: block;
+}
+
+.removeImageBtn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(220, 38, 38, 0.9);
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.813rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.removeImageBtn:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+.fileHint {
+  font-size: 0.813rem;
+  color: #666;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Disabled state for buttons */
+.submitButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

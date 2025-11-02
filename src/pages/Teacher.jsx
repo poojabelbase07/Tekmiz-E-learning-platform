@@ -1,7 +1,9 @@
-// pages/Teacher.jsx - Teacher Dashboard WITH REAL USER DATA
+// pages/Teacher.jsx - Teacher Dashboard WITH IMAGE UPLOAD
 import React, { useState, useMemo } from 'react';
 import { usePlaylistsContext } from '../context/PlaylistContext';
 import { useAuth } from '../context/AuthContext';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebase/config';
 import styles from './Teacher.module.css';
 
 const Teacher = () => {
@@ -20,8 +22,11 @@ const Teacher = () => {
     title: '',
     description: '',
     category: 'Web Development',
-    thumbnail: null
+    thumbnailFile: null,
+    thumbnailPreview: null
   });
+
+  const [uploading, setUploading] = useState(false);
 
   const categories = [
     'Web Development',
@@ -51,39 +56,83 @@ const Teacher = () => {
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // For demo, just store the file name
-      setFormData(prev => ({ ...prev, thumbnail: file.name }));
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+
+      setFormData(prev => ({ 
+        ...prev, 
+        thumbnailFile: file,
+        thumbnailPreview: URL.createObjectURL(file)
+      }));
     }
   };
 
-  const handleCreatePlaylist = (e) => {
+  const handleCreatePlaylist = async (e) => {
     e.preventDefault();
     
     if (!currentUser) {
       alert('Please login to create playlists');
       return;
     }
-    
-    // Add playlist using context with author info
-    const newPlaylist = addPlaylist({
-      title: formData.title,
-      description: formData.description,
-      thumbnail: '📚', // Default emoji for demo
-      category: formData.category,
-      author: currentUser.name, // Real user name
-      authorId: currentUser.uid, // Real user ID
-    });
-    
-    // Reset form and close modal
-    setFormData({
-      title: '',
-      description: '',
-      category: 'Web Development',
-      thumbnail: null
-    });
-    setShowCreateModal(false);
-    
-    alert('🎉 Playlist created successfully! Check the home page.');
+
+    if (!formData.thumbnailFile) {
+      alert('Please select a thumbnail image');
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      // Upload thumbnail to Firebase Storage
+      const timestamp = Date.now();
+      const fileName = `thumbnails/${currentUser.uid}_${timestamp}_${formData.thumbnailFile.name}`;
+      const storageRef = ref(storage, fileName);
+      
+      console.log('📤 Uploading thumbnail...');
+      await uploadBytes(storageRef, formData.thumbnailFile);
+      
+      // Get download URL
+      const thumbnailURL = await getDownloadURL(storageRef);
+      console.log('✅ Thumbnail uploaded:', thumbnailURL);
+
+      // Create playlist with thumbnail URL
+      const newPlaylist = await addPlaylist({
+        title: formData.title,
+        description: formData.description,
+        thumbnail: thumbnailURL,
+        category: formData.category,
+        author: currentUser.name,
+        authorId: currentUser.uid,
+      });
+
+      console.log('✅ Playlist created:', newPlaylist);
+
+      // Reset form and close modal
+      setFormData({
+        title: '',
+        description: '',
+        category: 'Web Development',
+        thumbnailFile: null,
+        thumbnailPreview: null
+      });
+      setShowCreateModal(false);
+      setUploading(false);
+
+      alert('🎉 Playlist created successfully!');
+    } catch (error) {
+      console.error('❌ Error creating playlist:', error);
+      alert('Error creating playlist. Please try again.');
+      setUploading(false);
+    }
   };
 
   const handleDeletePlaylist = (id) => {
@@ -286,16 +335,35 @@ const Teacher = () => {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>Thumbnail</label>
+                <label className={styles.label}>Thumbnail Image *</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleThumbnailChange}
+                  required
                   className={styles.fileInput}
                 />
-                {formData.thumbnail && (
-                  <p className={styles.fileName}>Selected: {formData.thumbnail}</p>
+                {formData.thumbnailPreview && (
+                  <div className={styles.imagePreview}>
+                    <img 
+                      src={formData.thumbnailPreview} 
+                      alt="Thumbnail preview" 
+                      className={styles.previewImage}
+                    />
+                    <button
+                      type="button"
+                      className={styles.removeImageBtn}
+                      onClick={() => setFormData(prev => ({ 
+                        ...prev, 
+                        thumbnailFile: null, 
+                        thumbnailPreview: null 
+                      }))}
+                    >
+                      ✕ Remove
+                    </button>
+                  </div>
                 )}
+                <p className={styles.fileHint}>Max size: 5MB. Recommended: 1200x630px</p>
               </div>
 
               <div className={styles.modalActions}>

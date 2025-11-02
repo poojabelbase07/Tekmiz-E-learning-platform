@@ -125,7 +125,15 @@ const Home = () => {
                 onClick={() => handlePlaylistClick(playlist.id)}
               >
                 <div className={styles.thumbnail}>
-                  <span className={styles.thumbnailIcon}>{playlist.thumbnail}</span>
+                  {playlist.thumbnail ? (
+                    <img 
+                      src={playlist.thumbnail} 
+                      alt={playlist.title}
+                      className={styles.thumbnailImage}
+                    />
+                  ) : (
+                    <span className={styles.thumbnailIcon}>📚</span>
+                  )}
                 </div>
                 <div className={styles.cardContent}>
                   <h3 className={styles.playlistTitle}>{playlist.title}</h3>
