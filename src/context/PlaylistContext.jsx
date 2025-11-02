@@ -150,6 +150,11 @@ export const PlaylistsProvider = ({ children }) => {
     return playlists.filter(p => p.category === category);
   };
 
+  // Get single playlist by ID
+  const getPlaylistById = (playlistId) => {
+    return playlists.find(p => p.id === playlistId);
+  };
+
   const value = {
     playlists,
     loading,
@@ -159,6 +164,7 @@ export const PlaylistsProvider = ({ children }) => {
     searchPlaylists,
     getPlaylistsByAuthor,
     getPlaylistsByCategory,
+    getPlaylistById,
     fetchPlaylists
   };
 
