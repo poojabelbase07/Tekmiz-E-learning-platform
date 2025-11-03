@@ -103,7 +103,7 @@ const Navbar = () => {
               <Search className={styles.searchIconInside} />
               <input
                 type="text"
-                placeholder="Search playlists..."
+                placeholder="Search playlists"
                 value={searchQuery}
                 onChange={handleSearchInputChange}
                 onKeyPress={handleSearchKeyPress}
