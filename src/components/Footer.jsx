@@ -86,12 +86,7 @@ const handleTeacherClick = () => {
     ]
   };
 
-  const socialLinks = [
-    { name: 'Twitter', icon: '𝕏', url: 'https://twitter.com' },
-    { name: 'GitHub', icon: '💻', url: 'https://github.com' },
-    { name: 'LinkedIn', icon: '💼', url: 'https://linkedin.com' },
-    { name: 'Discord', icon: '💬', url: 'https://discord.com' }
-  ];
+  
 
   const handleLinkClick = (path) => {
     if (path.startsWith('#')) {
