@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-
+import { getStorage } from "firebase/storage"; 
 
 // Your Firebase configuration
 // REPLACE these values with your actual Firebase config from Firebase Console
@@ -24,7 +24,7 @@ export const auth = getAuth(app);
 // Initialize Firestore Database
 export const db = getFirestore(app);
 
-
+export const storage = getStorage(app);
 
 
 export default app;
