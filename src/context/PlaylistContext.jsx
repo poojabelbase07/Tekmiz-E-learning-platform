@@ -1,17 +1,6 @@
-// context/PlaylistContext.jsx - WITH FIRESTORE
+// context/PlaylistContext.jsx - WITH BACKEND API
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  doc, 
-  deleteDoc, 
-  updateDoc,
-  query,
-  where,
-  orderBy 
-} from 'firebase/firestore';
-import { db } from '../firebase/config';
+import * as api from '../services/api';
 
 const PlaylistsContext = createContext();
 
@@ -27,29 +16,18 @@ export const PlaylistsProvider = ({ children }) => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all playlists from Firestore on mount
+  // Fetch all playlists on mount
   useEffect(() => {
     fetchPlaylists();
   }, []);
 
-  // Fetch all playlists
+  // Fetch all playlists from backend
   const fetchPlaylists = async () => {
     try {
-      console.log('📚 Fetching playlists from Firestore...');
-      const playlistsCollection = collection(db, 'playlists');
-      const playlistsQuery = query(playlistsCollection, orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(playlistsQuery);
-      
-      const playlistsData = [];
-      querySnapshot.forEach((doc) => {
-        playlistsData.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
-      
-      setPlaylists(playlistsData);
-      console.log(`✅ Loaded ${playlistsData.length} playlists`);
+      console.log('📚 Fetching playlists from backend...');
+      const response = await api.getAllPlaylists();
+      setPlaylists(response.playlists);
+      console.log(`✅ Loaded ${response.playlists.length} playlists`);
     } catch (error) {
       console.error('❌ Error fetching playlists:', error);
     } finally {
@@ -61,28 +39,12 @@ export const PlaylistsProvider = ({ children }) => {
   const addPlaylist = async (playlistData) => {
     try {
       console.log('➕ Adding new playlist:', playlistData.title);
+      const response = await api.createPlaylist(playlistData);
       
-      const newPlaylist = {
-        ...playlistData,
-        views: 0,
-        likes: 0,
-        resourcesCount: 0,
-        trending: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      const docRef = await addDoc(collection(db, 'playlists'), newPlaylist);
-      
-      const playlistWithId = {
-        id: docRef.id,
-        ...newPlaylist
-      };
-
-      setPlaylists(prev => [playlistWithId, ...prev]);
+      setPlaylists(prev => [response.playlist, ...prev]);
       console.log('✅ Playlist added successfully!');
       
-      return playlistWithId;
+      return response.playlist;
     } catch (error) {
       console.error('❌ Error adding playlist:', error);
       throw error;
@@ -93,8 +55,8 @@ export const PlaylistsProvider = ({ children }) => {
   const deletePlaylist = async (playlistId) => {
     try {
       console.log('🗑️ Deleting playlist:', playlistId);
-      await deleteDoc(doc(db, 'playlists', playlistId));
-      setPlaylists(prev => prev.filter(p => p.id !== playlistId));
+      await api.deletePlaylist(playlistId);
+      setPlaylists(prev => prev.filter(p => p._id !== playlistId));
       console.log('✅ Playlist deleted successfully!');
     } catch (error) {
       console.error('❌ Error deleting playlist:', error);
@@ -106,17 +68,10 @@ export const PlaylistsProvider = ({ children }) => {
   const updatePlaylist = async (playlistId, updates) => {
     try {
       console.log('✏️ Updating playlist:', playlistId);
-      const playlistRef = doc(db, 'playlists', playlistId);
-      
-      const updatedData = {
-        ...updates,
-        updatedAt: new Date().toISOString()
-      };
-
-      await updateDoc(playlistRef, updatedData);
+      const response = await api.updatePlaylist(playlistId, updates);
       
       setPlaylists(prev => prev.map(p => 
-        p.id === playlistId ? { ...p, ...updatedData } : p
+        p._id === playlistId ? response.playlist : p
       ));
       
       console.log('✅ Playlist updated successfully!');
@@ -152,7 +107,7 @@ export const PlaylistsProvider = ({ children }) => {
 
   // Get single playlist by ID
   const getPlaylistById = (playlistId) => {
-    return playlists.find(p => p.id === playlistId);
+    return playlists.find(p => p._id === playlistId);
   };
 
   const value = {

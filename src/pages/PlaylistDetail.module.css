@@ -468,3 +468,45 @@
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(147, 51, 234, 0.4);
 }
+
+/* Add to PlaylistDetail.module.css */
+
+.thumbnailImage {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.videoElement {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.loadingResources {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.addResourceBtn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: all 0.2s;
+}
+
+.addResourceBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(147, 51, 234, 0.4);
+}

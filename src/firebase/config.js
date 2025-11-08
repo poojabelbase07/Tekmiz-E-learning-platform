@@ -7,12 +7,12 @@ import { getStorage } from "firebase/storage";
 // Your Firebase configuration
 // REPLACE these values with your actual Firebase config from Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyA7GHpasa_66vq6oy9GP2ni4g39FAgLfgE",
-  authDomain: "tekmiz-free.firebaseapp.com",
-  projectId: "tekmiz-free",
-  storageBucket: "tekmiz-free.firebasestorage.app",
-  messagingSenderId: "624797274003",
-  appId: "1:624797274003:web:1459cc9d3ce85c27812266"
+  apiKey: "AIzaSyChk7yqJwp1Kz03NzzJv6geGC0SElhIdTw",
+  authDomain: "tekmiz-e-learning-platform.firebaseapp.com",
+  projectId: "tekmiz-e-learning-platform",
+  storageBucket: "tekmiz-e-learning-platform.firebasestorage.app",
+  messagingSenderId: "137470775937",
+  appId: "1:137470775937:web:0d5863f82a6768f047f380"
 };
 
 // Initialize Firebase

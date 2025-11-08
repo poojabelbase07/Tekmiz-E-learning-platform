@@ -1,20 +1,19 @@
-// pages/Teacher.jsx - Teacher Dashboard WITH IMAGE UPLOAD
+// pages/Teacher.jsx - WITH BACKEND API
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePlaylistsContext } from '../context/PlaylistContext';
 import { useAuth } from '../context/AuthContext';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase/config';
 import styles from './Teacher.module.css';
 
 const Teacher = () => {
+  const navigate = useNavigate();
   const { playlists, addPlaylist, deletePlaylist } = usePlaylistsContext();
-  const { currentUser } = useAuth(); // Get real user from AuthContext
+  const { currentUser } = useAuth();
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Filter to show only THIS teacher's playlists
   const teacherPlaylists = useMemo(() => {
     if (!currentUser) return [];
-    // Filter playlists by current user's UID
     return playlists.filter(p => p.authorId === currentUser.uid);
   }, [playlists, currentUser]);
 
@@ -56,13 +55,11 @@ const Teacher = () => {
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Image size should be less than 5MB');
         return;
@@ -92,23 +89,11 @@ const Teacher = () => {
     setUploading(true);
 
     try {
-      // Upload thumbnail to Firebase Storage
-      const timestamp = Date.now();
-      const fileName = `thumbnails/${currentUser.uid}_${timestamp}_${formData.thumbnailFile.name}`;
-      const storageRef = ref(storage, fileName);
-      
-      console.log('📤 Uploading thumbnail...');
-      await uploadBytes(storageRef, formData.thumbnailFile);
-      
-      // Get download URL
-      const thumbnailURL = await getDownloadURL(storageRef);
-      console.log('✅ Thumbnail uploaded:', thumbnailURL);
-
-      // Create playlist with thumbnail URL
+      // Create playlist with backend API
       const newPlaylist = await addPlaylist({
         title: formData.title,
         description: formData.description,
-        thumbnail: thumbnailURL,
+        thumbnailFile: formData.thumbnailFile,
         category: formData.category,
         author: currentUser.name,
         authorId: currentUser.uid,
@@ -135,25 +120,31 @@ const Teacher = () => {
     }
   };
 
-  const handleDeletePlaylist = (id) => {
+  const handleDeletePlaylist = async (id) => {
     if (window.confirm('Are you sure you want to delete this playlist?')) {
-      deletePlaylist(id);
+      try {
+        await deletePlaylist(id);
+        alert('✅ Playlist deleted successfully!');
+      } catch (error) {
+        alert('❌ Error deleting playlist');
+      }
     }
   };
 
   const handleEditPlaylist = (id) => {
     console.log('Edit playlist:', id);
-    // TODO: Open edit modal
     alert('Edit feature coming soon!');
   };
 
-  // Get first name from full name
+  const handleViewPlaylist = (id) => {
+    navigate(`/playlist/${id}`);
+  };
+
   const getFirstName = (fullName) => {
     if (!fullName) return 'Teacher';
     return fullName.split(' ')[0];
   };
 
-  // Show loading if no user data yet
   if (!currentUser) {
     return (
       <div className={styles.teacherContainer}>
@@ -242,32 +233,51 @@ const Teacher = () => {
         ) : (
           <div className={styles.playlistsGrid}>
             {teacherPlaylists.map((playlist) => (
-              <div key={playlist.id} className={styles.playlistCard}>
+              <div key={playlist._id} className={styles.playlistCard}>
                 {playlist.trending && (
                   <div className={styles.trendingBadge}>🔥 Trending</div>
                 )}
                 <div className={styles.playlistThumbnail}>
-                  <span className={styles.thumbnailIcon}>{playlist.thumbnail}</span>
+                  {playlist.thumbnail ? (
+                    <img 
+                      src={playlist.thumbnail} 
+                      alt={playlist.title}
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover', 
+                        borderRadius: '12px' 
+                      }}
+                    />
+                  ) : (
+                    <span className={styles.thumbnailIcon}>📚</span>
+                  )}
                 </div>
                 <div className={styles.playlistContent}>
                   <h3 className={styles.playlistTitle}>{playlist.title}</h3>
                   <p className={styles.playlistCategory}>{playlist.category}</p>
                   <div className={styles.playlistStats}>
-                    <span>📝 {playlist.resourcesCount} resources</span>
-                    <span>👁️ {playlist.views}</span>
-                    <span>❤️ {playlist.likes}</span>
+                    <span>📝 {playlist.resourcesCount || 0} resources</span>
+                    <span>👁️ {playlist.views || 0}</span>
+                    <span>❤️ {playlist.likes || 0}</span>
                   </div>
                 </div>
                 <div className={styles.playlistActions}>
                   <button 
+                    className={styles.viewButton}
+                    onClick={() => handleViewPlaylist(playlist._id)}
+                  >
+                    View
+                  </button>
+                  <button 
                     className={styles.editButton}
-                    onClick={() => handleEditPlaylist(playlist.id)}
+                    onClick={() => handleEditPlaylist(playlist._id)}
                   >
                     Edit
                   </button>
                   <button 
                     className={styles.deleteButton}
-                    onClick={() => handleDeletePlaylist(playlist.id)}
+                    onClick={() => handleDeletePlaylist(playlist._id)}
                   >
                     Delete
                   </button>
@@ -280,13 +290,14 @@ const Teacher = () => {
 
       {/* Create Playlist Modal */}
       {showCreateModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowCreateModal(false)}>
+        <div className={styles.modalOverlay} onClick={() => !uploading && setShowCreateModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <h2 className={styles.modalTitle}>Create New Playlist</h2>
               <button 
                 className={styles.closeButton}
-                onClick={() => setShowCreateModal(false)}
+                onClick={() => !uploading && setShowCreateModal(false)}
+                disabled={uploading}
               >
                 ✕
               </button>
@@ -303,6 +314,7 @@ const Teacher = () => {
                   required
                   placeholder="e.g., JavaScript Mastery"
                   className={styles.input}
+                  disabled={uploading}
                 />
               </div>
 
@@ -316,6 +328,7 @@ const Teacher = () => {
                   placeholder="Brief description of your playlist..."
                   rows="4"
                   className={styles.textarea}
+                  disabled={uploading}
                 />
               </div>
 
@@ -327,6 +340,7 @@ const Teacher = () => {
                   onChange={handleInputChange}
                   required
                   className={styles.select}
+                  disabled={uploading}
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -342,6 +356,7 @@ const Teacher = () => {
                   onChange={handleThumbnailChange}
                   required
                   className={styles.fileInput}
+                  disabled={uploading}
                 />
                 {formData.thumbnailPreview && (
                   <div className={styles.imagePreview}>
@@ -358,6 +373,7 @@ const Teacher = () => {
                         thumbnailFile: null, 
                         thumbnailPreview: null 
                       }))}
+                      disabled={uploading}
                     >
                       ✕ Remove
                     </button>
@@ -371,11 +387,16 @@ const Teacher = () => {
                   type="button"
                   className={styles.cancelButton}
                   onClick={() => setShowCreateModal(false)}
+                  disabled={uploading}
                 >
                   Cancel
                 </button>
-                <button type="submit" className={styles.submitButton}>
-                  Create Playlist
+                <button 
+                  type="submit" 
+                  className={styles.submitButton}
+                  disabled={uploading}
+                >
+                  {uploading ? 'Creating...' : 'Create Playlist'}
                 </button>
               </div>
             </form>

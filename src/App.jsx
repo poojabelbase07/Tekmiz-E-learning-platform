@@ -12,6 +12,7 @@ import About from './pages/About';
 import Teacher from './pages/Teacher';
 import Contact from './pages/Contact';
 import PlaylistDetail from './pages/PlaylistDetail';
+import AddResources from './pages/AddResources';
 import Login from './components/Login';
 import Register from './components/Register';
 
@@ -60,6 +61,14 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+
+              <Route path="/teacher/playlist/:playlistId/add-resources" element={
+               <ProtectedRoute requireTeacher={true}>
+              <AddResources />
+              </ProtectedRoute>
+              } 
+              />
+
             </Route>
           </Routes>
         </PlaylistsProvider>

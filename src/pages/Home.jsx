@@ -1,4 +1,4 @@
-// pages/Home.jsx - DYNAMIC (NO DUMMY DATA)
+// pages/Home.jsx - WITH BACKEND API
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlaylistsContext } from '../context/PlaylistContext';
@@ -22,7 +22,6 @@ const Home = () => {
   ];
 
   const handlePlaylistClick = (id) => {
-    // Check if user is logged in before accessing playlist
     if (!currentUser) {
       navigate('/login');
       return;
@@ -44,7 +43,6 @@ const Home = () => {
   };
 
   const handleCategoryClick = (categoryName) => {
-    // TODO: Implement category filtering
     console.log('Category clicked:', categoryName);
   };
 
@@ -120,9 +118,9 @@ const Home = () => {
           <div className={styles.playlistGrid}>
             {playlists.map((playlist) => (
               <div 
-                key={playlist.id} 
+                key={playlist._id} 
                 className={styles.playlistCard}
-                onClick={() => handlePlaylistClick(playlist.id)}
+                onClick={() => handlePlaylistClick(playlist._id)}
               >
                 <div className={styles.thumbnail}>
                   {playlist.thumbnail ? (
