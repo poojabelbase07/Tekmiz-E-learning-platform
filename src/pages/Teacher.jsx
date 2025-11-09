@@ -74,51 +74,52 @@ const Teacher = () => {
   };
 
   const handleCreatePlaylist = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  
+  if (!currentUser) {
+    alert('Please login to create playlists');
+    return;
+  }
+
+  if (!formData.thumbnailFile) {
+    alert('Please select a thumbnail image');
+    return;
+  }
+
+  setUploading(true);
+
+  try {
+    const newPlaylist = await addPlaylist({
+      title: formData.title,
+      description: formData.description,
+      thumbnailFile: formData.thumbnailFile,
+      category: formData.category,
+      author: currentUser.name,
+      authorId: currentUser.uid,
+    });
+
+    console.log('✅ Playlist created:', newPlaylist);
+
+    // Reset form and close modal
+    setFormData({
+      title: '',
+      description: '',
+      category: 'Web Development',
+      thumbnailFile: null,
+      thumbnailPreview: null
+    });
+    setShowCreateModal(false);
+
+    //  Show success message (playlist already visible due to optimistic update!)
+    alert('🎉 Playlist created and uploading in background!');
     
-    if (!currentUser) {
-      alert('Please login to create playlists');
-      return;
-    }
-
-    if (!formData.thumbnailFile) {
-      alert('Please select a thumbnail image');
-      return;
-    }
-
-    setUploading(true);
-
-    try {
-      // Create playlist with backend API
-      const newPlaylist = await addPlaylist({
-        title: formData.title,
-        description: formData.description,
-        thumbnailFile: formData.thumbnailFile,
-        category: formData.category,
-        author: currentUser.name,
-        authorId: currentUser.uid,
-      });
-
-      console.log('✅ Playlist created:', newPlaylist);
-
-      // Reset form and close modal
-      setFormData({
-        title: '',
-        description: '',
-        category: 'Web Development',
-        thumbnailFile: null,
-        thumbnailPreview: null
-      });
-      setShowCreateModal(false);
-      setUploading(false);
-
-      alert('🎉 Playlist created successfully!');
-    } catch (error) {
-      console.error('❌ Error creating playlist:', error);
-      alert('Error creating playlist. Please try again.');
-      setUploading(false);
-    }
-  };
+  } catch (error) {
+    console.error('❌ Error creating playlist:', error);
+    alert('❌ Error creating playlist. Please check your connection and try again.');
+  } finally {
+    setUploading(false);
+  }
+};
 
   const handleDeletePlaylist = async (id) => {
     if (window.confirm('Are you sure you want to delete this playlist?')) {
