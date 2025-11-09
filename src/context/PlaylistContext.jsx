@@ -1,4 +1,4 @@
-// context/PlaylistContext.jsx - WITH BACKEND API
+// context/PlaylistContext.jsx - WITH OPTIMISTIC UPDATES
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as api from '../services/api';
 
@@ -16,12 +16,10 @@ export const PlaylistsProvider = ({ children }) => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all playlists on mount
   useEffect(() => {
     fetchPlaylists();
   }, []);
 
-  // Fetch all playlists from backend
   const fetchPlaylists = async () => {
     try {
       console.log('📚 Fetching playlists from backend...');
@@ -35,36 +33,77 @@ export const PlaylistsProvider = ({ children }) => {
     }
   };
 
-  // Add new playlist
+  // ⭐ OPTIMISTIC UPDATE - Show immediately while uploading
   const addPlaylist = async (playlistData) => {
     try {
       console.log('➕ Adding new playlist:', playlistData.title);
+      
+      // 1. Create temporary ID
+      const tempId = `temp_${Date.now()}`;
+      
+      // 2. Create optimistic playlist (show immediately)
+      const optimisticPlaylist = {
+        _id: tempId,
+        title: playlistData.title,
+        description: playlistData.description,
+        category: playlistData.category,
+        author: playlistData.author,
+        authorId: playlistData.authorId,
+        thumbnail: playlistData.thumbnailFile ? URL.createObjectURL(playlistData.thumbnailFile) : null,
+        views: 0,
+        likes: 0,
+        resourcesCount: 0,
+        trending: false,
+        createdAt: new Date().toISOString(),
+        _isOptimistic: true // Flag to identify temp playlists
+      };
+
+      // 3. Add to state immediately (user sees it right away!)
+      setPlaylists(prev => [optimisticPlaylist, ...prev]);
+      
+      // 4. Upload to backend in background
       const response = await api.createPlaylist(playlistData);
       
-      setPlaylists(prev => [response.playlist, ...prev]);
-      console.log('✅ Playlist added successfully!');
+      // 5. Replace optimistic with real data
+      setPlaylists(prev => prev.map(p => 
+        p._id === tempId ? { ...response.playlist, _isOptimistic: false } : p
+      ));
+      
+      console.log('✅ Playlist confirmed and replaced!');
       
       return response.playlist;
     } catch (error) {
       console.error('❌ Error adding playlist:', error);
+      
+      // 6. Remove optimistic playlist if upload failed
+      setPlaylists(prev => prev.filter(p => !p._isOptimistic));
+      
       throw error;
     }
   };
 
-  // Delete playlist
   const deletePlaylist = async (playlistId) => {
     try {
       console.log('🗑️ Deleting playlist:', playlistId);
-      await api.deletePlaylist(playlistId);
+      
+      // Optimistically remove from UI
+      const previousPlaylists = [...playlists];
       setPlaylists(prev => prev.filter(p => p._id !== playlistId));
-      console.log('✅ Playlist deleted successfully!');
+      
+      try {
+        await api.deletePlaylist(playlistId);
+        console.log('✅ Playlist deleted successfully!');
+      } catch (error) {
+        // Restore if delete failed
+        setPlaylists(previousPlaylists);
+        throw error;
+      }
     } catch (error) {
       console.error('❌ Error deleting playlist:', error);
       throw error;
     }
   };
 
-  // Update playlist
   const updatePlaylist = async (playlistId, updates) => {
     try {
       console.log('✏️ Updating playlist:', playlistId);
@@ -81,7 +120,6 @@ export const PlaylistsProvider = ({ children }) => {
     }
   };
 
-  // Search playlists
   const searchPlaylists = (searchQuery) => {
     if (!searchQuery.trim()) {
       return playlists;
@@ -95,17 +133,14 @@ export const PlaylistsProvider = ({ children }) => {
     );
   };
 
-  // Get playlists by author
   const getPlaylistsByAuthor = (authorId) => {
     return playlists.filter(p => p.authorId === authorId);
   };
 
-  // Get playlists by category
   const getPlaylistsByCategory = (category) => {
     return playlists.filter(p => p.category === category);
   };
 
-  // Get single playlist by ID
   const getPlaylistById = (playlistId) => {
     return playlists.find(p => p._id === playlistId);
   };
