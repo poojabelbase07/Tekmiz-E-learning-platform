@@ -1,5 +1,5 @@
 // src/services/api.js - API Service for Backend Calls
-const API_BASE_URL = 'https://tekmiz-e-learning-platform-backend.onrender.com';
+const API_BASE_URL = 'https://tekmiz-e-learning-platform-backend.onrender.com/api';
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
