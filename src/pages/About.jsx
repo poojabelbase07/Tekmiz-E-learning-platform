@@ -18,11 +18,6 @@ const About = () => {
       icon: '👥',
       title: 'Student to Teacher',
       description: 'Share your knowledge and create playlists for learners worldwide.'
-    },
-    {
-      icon: '💡',
-      title: 'Interview Ready',
-      description: 'Specialized playlists with practice questions and solutions.'
     }
   ];
 
