@@ -1,289 +1,144 @@
-/* About Container */
-.aboutContainer {
-  animation: fadeIn 0.4s ease-in;
-}
+/* About.module.css - Clean & Premium Design */
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.aboutContainer {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+  padding-bottom: 4rem;
 }
 
 /* Hero Section */
 .heroSection {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
-  padding: 4rem 3rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.heroSection::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-.heroContent {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
-  position: relative;
-  z-index: 1;
+  padding: 6rem 2rem 4rem;
+  text-align: center;
 }
 
 .heroTitle {
-  font-size: 3rem;
-  font-weight: 800;
-  color: white;
-  margin: 0 0 1rem 0;
-  letter-spacing: -1px;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
 }
 
-.brandName {
-  background: linear-gradient(135deg, #FFF 0%, #E9D5FF 100%);
+.highlight {
+  background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .heroSubtitle {
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.95);
-  margin: 0 0 1.5rem 0;
-  font-weight: 500;
-}
-
-.heroDescription {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.8;
-  margin: 0;
-  max-width: 700px;
+  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  color: #666;
+  line-height: 1.7;
+  max-width: 750px;
   margin: 0 auto;
-}
-
-/* Stats Section */
-.statsSection {
-  padding: 3rem;
-  background: white;
-}
-
-.statsGrid {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-}
-
-.statBox {
-  text-align: center;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
-  border-radius: 16px;
-  transition: transform 0.3s ease;
-}
-
-.statBox:hover {
-  transform: translateY(-5px);
-}
-
-.statNumber {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #8B5CF6;
-  margin: 0 0 0.5rem 0;
-  letter-spacing: -1px;
-}
-
-.statLabel {
-  font-size: 1rem;
-  color: #6D28D9;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Section Title */
-.sectionTitle {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-align: center;
-  color: #1a1a1a;
-  margin: 0 0 3rem 0;
-  letter-spacing: -0.5px;
+  font-weight: 400;
 }
 
 /* Mission Section */
 .missionSection {
-  padding: 4rem 3rem;
-  background: #FAFAFA;
+  max-width: 800px;
+  margin: 5rem auto;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
-.missionContent {
-  max-width: 900px;
-  margin: 0 auto;
+.sectionTitle {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
 }
 
 .missionText {
   font-size: 1.125rem;
+  color: #555;
   line-height: 1.8;
-  color: #333;
-}
-
-.missionText p {
-  margin: 0 0 1.5rem 0;
-}
-
-.missionText p:last-child {
-  margin-bottom: 0;
-}
-
-.missionText strong {
-  color: #8B5CF6;
-  font-weight: 600;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 /* Features Section */
 .featuresSection {
-  padding: 4rem 3rem;
-  background: white;
+  max-width: 1100px;
+  margin: 5rem auto;
+  padding: 3rem 2rem;
+}
+
+.featuresSection .sectionTitle {
+  text-align: center;
+  margin-bottom: 3.5rem;
 }
 
 .featuresGrid {
-  max-width: 1200px;
-  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 2rem;
+  margin-top: 2rem;
 }
 
 .featureCard {
   background: white;
-  border-radius: 16px;
-  padding: 2rem;
+  padding: 2.5rem 2rem;
+  border-radius: 18px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .featureCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.15);
-  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 122, 255, 0.15);
+  border-color: rgba(0, 122, 255, 0.2);
 }
 
 .featureIcon {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  margin: 0 auto 1.5rem auto;
+  font-size: 3rem;
+  margin-bottom: 1.25rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover .featureIcon {
+  transform: scale(1.1);
 }
 
 .featureTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: #1a1a1a;
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.3px;
+  margin-bottom: 0.875rem;
+  letter-spacing: -0.01em;
 }
 
 .featureDescription {
-  font-size: 1rem;
+  font-size: 0.975rem;
   color: #666;
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* How It Works Section */
-.howItWorksSection {
-  padding: 4rem 3rem;
-  background: #FAFAFA;
-}
-
-.stepsContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-}
-
-.step {
-  text-align: center;
-  padding: 2rem;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.step:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.12);
-}
-
-.stepNumber {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 800;
-  margin: 0 auto 1.5rem auto;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-}
-
-.stepTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.3px;
-}
-
-.stepDescription {
-  font-size: 1rem;
-  color: #666;
-  line-height: 1.7;
-  margin: 0;
+  line-height: 1.65;
 }
 
 /* CTA Section */
 .ctaSection {
-  padding: 4rem 3rem;
-  background: white;
+  max-width: 1100px;
+  margin: 5rem auto 2rem;
+  padding: 0 2rem;
 }
 
 .ctaCard {
-  max-width: 800px;
-  margin: 0 auto;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  border-radius: 24px;
-  padding: 4rem 3rem;
+  background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);
+  padding: 4.5rem 3rem;
+  border-radius: 28px;
   text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 122, 255, 0.25);
   position: relative;
   overflow: hidden;
 }
@@ -292,104 +147,113 @@
   content: '';
   position: absolute;
   top: -50%;
-  right: -10%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-  border-radius: 50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .ctaTitle {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4vw, 2.75rem);
   font-weight: 700;
   color: white;
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.5px;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
   position: relative;
   z-index: 1;
 }
 
 .ctaText {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 2rem 0;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
   position: relative;
   z-index: 1;
 }
 
 .ctaButton {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
-  color: white;
+  background: white;
+  color: #007aff;
+  padding: 1.125rem 3rem;
   border: none;
-  padding: 1rem 3rem;
   border-radius: 14px;
+  font-size: 1.05rem;
   font-weight: 600;
-  font-size: 1.125rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
 }
 
 .ctaButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .ctaButton:active {
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(0.99);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .heroSection {
-    padding: 3rem 1.5rem;
+    padding: 4.5rem 1.5rem 3rem;
   }
 
-  .heroTitle {
-    font-size: 2rem;
+  .missionSection {
+    padding: 2.5rem 1.5rem;
+    margin: 3.5rem auto;
   }
 
-  .heroSubtitle {
-    font-size: 1.125rem;
+  .featuresSection {
+    padding: 2.5rem 1.5rem;
+    margin: 3.5rem auto;
   }
 
-  .heroDescription {
-    font-size: 1rem;
-  }
-
-  .sectionTitle {
-    font-size: 2rem;
-  }
-
-  .statsSection,
-  .missionSection,
-  .featuresSection,
-  .howItWorksSection,
-  .ctaSection {
-    padding: 3rem 1.5rem;
-  }
-
-  .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .featuresGrid,
-  .stepsContainer {
+  .featuresGrid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .ctaCard {
-    padding: 3rem 2rem;
+    padding: 3.5rem 2rem;
   }
 
-  .ctaTitle {
-    font-size: 1.75rem;
+  .ctaSection {
+    margin: 3.5rem auto 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    padding: 3.5rem 1rem 2.5rem;
   }
 
-  .ctaText {
-    font-size: 1rem;
+  .missionSection {
+    padding: 2rem 1rem;
+    border-radius: 16px;
+  }
+
+  .featuresSection {
+    padding: 2rem 1rem;
+  }
+
+  .featureCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .ctaCard {
+    padding: 3rem 1.5rem;
+    border-radius: 20px;
+  }
+
+  .ctaButton {
+    width: 100%;
+    padding: 1rem 2rem;
   }
 }
